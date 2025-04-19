@@ -30,12 +30,24 @@ public class AgDataController {
     }
 
     // TODO: GET /api/agdata/crop-count?cropName=corn
+    @GetMapping("/crop-count")
+    public Long  getcount(@RequestParam String corn) {
+    	return agDataService.getCropCount(corn);
+    }
 
 
     // TODO: GET /api/agdata/average-yield?cropName=wheat
+    @GetMapping("/average-yield")
+    public  double getAverageYield (@RequestParam String cropName) {
+    	return agDataService.getAverageYield(cropName);
+    }
 
 
     // TODO: GET /api/agdata/by-region?region=Midwest
+    @GetMapping("/by-region")
+    public List<AgData>  getRecordsByRegion (@RequestParam String region){
+    	return agDataService.getRecordsByRegion(region);
+    }
 
 
 }

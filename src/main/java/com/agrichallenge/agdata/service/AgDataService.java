@@ -1,5 +1,6 @@
 package com.agrichallenge.agdata.service;
 
+import com.agrichallenge.agdata.exception.ResourceNotFoundException;
 import com.agrichallenge.agdata.model.AgData;
 import org.springframework.stereotype.Service;
 
@@ -7,6 +8,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,21 +33,42 @@ public class AgDataService {
     }
 
     public Long getCropCount(String cropName) {
-        // TODO: Implement this method to Count how many times a specific crop appears in the dataset
-
-        return 0L;
+    	long count = agDataList.stream().filter(agData -> agData.getCrop().equalsIgnoreCase(cropName)).count();
+    	if(count==0 ) {
+    		throw new ResourceNotFoundException("No records found for cropName : "+ cropName);
+    	}
+    	return count;
+        
     }
 
     public double getAverageYield(String cropName) {
         // TODO: Implement this method to Calculate the average yield for a specific crop if it exists, else return 0.0
-
-        return 0.0;
+        Iterator<AgData> iterator = agDataList.iterator();
+        Double ans = 0.0;
+        int count =0;
+        while(iterator.hasNext()) {
+        	AgData agData = iterator.next();
+        	
+        	if(agData.getCrop().equalsIgnoreCase(cropName)) {
+        		ans+= agData.getYield();
+        		count++;
+        }
+        }
+        if(ans== 0.0) {
+        	throw new ResourceNotFoundException("No yield data found for crop: " + cropName);
+        }
+        
+       return ans/count;
     }
 
     public List<AgData> getRecordsByRegion(String region) {
         // TODO: Implement this method to Get all records from a specific region
+    	List<AgData> ans  = agDataList.stream().filter(agData -> agData.getRegion().equalsIgnoreCase(region)).collect(Collectors.toList());
+    	if(ans.isEmpty()) {
+    		throw new ResourceNotFoundException("No records found for region: " + region);
+    	}
+    	return ans;
 
-        return null;
     }
 
 }
